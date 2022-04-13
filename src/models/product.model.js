@@ -4,21 +4,28 @@ let Product = function(product) {
     this.id = product.id;
     this.name = product.name;
     this.qty = product.qty;
+    this.price = product.price;
     this.createdAt = new Date();
     this.updatedAt = new Date();
     this.createdBy = product.createdBy;
     this.updatedBy = product.updatedBy;
 }
 
-Product.getProductAll = (result) => {
-    dbConn.query("SELECT * FROM products", (error, res) => {
+Product.getProductAll = (userId, result) => {
+    dbConn.query(`SELECT products.id, products.name, products.qty, products.price, products.createdAt, products.updatedAt,
+    (users.username) AS createdBy,
+    (SELECT users.username FROM users WHERE users.id = products.updatedBy) AS updatedBy
+    FROM products INNER JOIN users ON products.createdBy = users.id WHERE users.createdBy = ?`, userId, (error, res) => {
         if(error) throw error;
         result(null, res);
     });
 }
 
-Product.getProductById = (id, result) => {
-    dbConn.query("SELECT * FROM products WHERE id = ?", [id], (error, res) => {
+Product.getProductById = ([userId, id], result) => {
+    dbConn.query(`SELECT products.id, products.name, products.qty, products.createdAt, products.updatedAt,
+    (users.username) AS createdBy,
+    (SELECT users.username FROM users WHERE users.id = products.updatedBy) AS updatedBy
+    FROM products INNER JOIN users ON products.createdBy = users.id WHERE products.id = ? AND users.createdBy = ?`, [id, userId], (error, res) => {
         if(error) throw error;
         result(null, res);
     });
@@ -32,7 +39,7 @@ Product.createProduct = (productData, result) => {
 }
 
 Product.updateProduct = (id, productData, result) => {
-    dbConn.query(`UPDATE products SET name=?, qty=?, updatedAt=?, updatedBy=? WHERE id=?`, [productData.name, productData.qty, new Date(), productData.updatedBy, id], (error, res) => {
+    dbConn.query(`UPDATE products SET name=?, qty=?, price=?, updatedAt=?, updatedBy=? WHERE id=?`, [productData.name, productData.qty, productData.price, new Date(), productData.updatedBy, id], (error, res) => {
         if(error) throw error;
         result(null, res);
     });

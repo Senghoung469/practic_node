@@ -6,6 +6,7 @@ const userValidator = body => {
         username: Joi.string().alphanum().trim(true).min(6).max(100).required(),
         email: Joi.string().email().max(200).required(),
         password: Joi.string().trim(true).min(6).required(),
+        password_confirmation: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' } } }),
         createdAt: Joi.date(),
         updatedAt: Joi.date(),
         createdBy: Joi.number(),
@@ -19,6 +20,7 @@ const productValidator = body => {
     const schema = {
         name: Joi.string().min(3).max(100).trim(true).required(),
         qty: Joi.number().required(),
+        price: Joi.number().required(),
         createdAt: Joi.date(),
         updatedAt: Joi.date(),
         createdBy: Joi.number(),

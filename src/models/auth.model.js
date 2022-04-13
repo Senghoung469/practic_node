@@ -10,13 +10,14 @@ let Auth = function(auth) {
     this.token = auth.token;
     this.createdAt = new Date();
     this.updatedAt = new Date();
-    this.createdBy = auth.createdBy;
-    this.updatedBy = auth.updatedBy;
+    this.createdBy = 1;
+    this.updatedBy = 1;
 }
 
 Auth.signAuth = (authData, result) => {
     dbConn.query("INSERT INTO users SET ?", authData, (error, res) => {
         try {
+            
             result(null, res);
         } catch (error) {
             result(null, error);

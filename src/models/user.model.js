@@ -14,19 +14,27 @@ let User = function(user) {
 }
 
 User.getUserAll = (userId, result) => {
-    dbConn.query("SELECT * FROM users where id = ?", userId, (error, res) => {
-        if(error){
-            console.log("Error fetch ", error);
-            result(null, error);
-        }else{
+    dbConn.query(`
+        SELECT users.id, users.username, users.email, users.PASSWORD, users.createdAt, users.updatedAt,
+        (SELECT users.username FROM users WHERE tb_user.createdBy = users.id) AS createdBy,
+        (SELECT users.username FROM users WHERE tb_user.updatedBy = users.id) AS updatedBy
+        FROM users INNER JOIN users tb_user ON users.id = tb_user.id WHERE users.createdBy = ?`, userId, (error, res) => {
+        try {
+            if(error) throw error;
             result(null, res);
+        } catch (error) {
+            result(null, error);
         }
 
     });
 }
 
-User.getUserById = ([userId, id], result) => {
-    dbConn.query("SELECT * FROM users WHERE id = ? AND id= ?", [userId, id], (error, res) => {
+User.getUserById = ([id, userId], result) => {
+    dbConn.query(`
+        SELECT users.id, users.username, users.email, users.PASSWORD, users.createdAt, users.updatedAt,
+        (SELECT users.username FROM users WHERE tb_user.createdBy = users.id) AS createdBy,
+        (SELECT users.username FROM users WHERE tb_user.updatedBy = users.id) AS updatedBy
+        FROM users INNER JOIN users tb_user ON users.id = tb_user.id WHERE users.createdBy = ? AND users.id = ?`, [id, userId], (error, res) => {
         if(error) throw error;
         result(null, res);
     });
@@ -34,8 +42,13 @@ User.getUserById = ([userId, id], result) => {
 
 User.createUser = (userData, result) => {
     dbConn.query("INSERT INTO users SET ?", userData, (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            // Check username exist 
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
