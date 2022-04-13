@@ -13,8 +13,8 @@ let User = function(user) {
     this.updatedBy = user.updatedBy;
 }
 
-User.getUserAll = (result) => {
-    dbConn.query("SELECT * FROM users", (error, res) => {
+User.getUserAll = (userId, result) => {
+    dbConn.query("SELECT * FROM users where id = ?", userId, (error, res) => {
         if(error){
             console.log("Error fetch ", error);
             result(null, error);
@@ -25,8 +25,8 @@ User.getUserAll = (result) => {
     });
 }
 
-User.getUserById = (id, result) => {
-    dbConn.query("SELECT * FROM users WHERE id = ?", id, (error, res) => {
+User.getUserById = ([userId, id], result) => {
+    dbConn.query("SELECT * FROM users WHERE id = ? AND id= ?", [userId, id], (error, res) => {
         if(error) throw error;
         result(null, res);
     });

@@ -24,20 +24,21 @@ app.get('/', (req, res) => {
 })
 // Auth route
 app.post('/api/v1/sign', authRoutes);
+app.post('/api/v1/login', authRoutes);
 
 // User route
 app.get('/api/v1/user', auth, userRoutes);
-app.get('/api/v1/user/:id', userRoutes);
+app.get('/api/v1/user/:id', auth, userRoutes);
 app.post('/api/v1/user', auth, userRoutes);
-app.put('/api/v1/user/:id', userRoutes);
-app.delete('/api/v1/user/:id', userRoutes);
+app.put('/api/v1/user/:id', auth, userRoutes);
+app.delete('/api/v1/user/:id', auth, userRoutes);
 
 // Product route
-app.get('/api/v1/product', productRoutes);
-app.get('/api/v1/product/:id', productRoutes);
-app.post('/api/v1/product', productRoutes);
-app.put('/api/v1/product/:id', productRoutes);
-app.delete('/api/v1/product/:id', productRoutes);
+app.get('/api/v1/product', auth, productRoutes);
+app.get('/api/v1/product/:id', auth, productRoutes);
+app.post('/api/v1/product', auth, productRoutes);
+app.put('/api/v1/product/:id', auth, productRoutes);
+app.delete('/api/v1/product/:id', auth, productRoutes);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)

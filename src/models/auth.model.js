@@ -16,22 +16,23 @@ let Auth = function(auth) {
 
 Auth.signAuth = (authData, result) => {
     dbConn.query("INSERT INTO users SET ?", authData, (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
-Auth.loginAuth = (req, result) => {
-
+Auth.loginAuth = ([username, password], result) => {
+    dbConn.query("SELECT * FROM users WHERE username = ?", [username, password], async (error, res) => {
+        try {
+            const validPassword = await bcrypt.compare(password, res[0].password);
+            result(null, {validPassword: validPassword, user_id: res[0].id});
+        } catch (error) {
+            result(null, error);
+        }
+    });
 }
-
-// dbConn.query("SELECT COUNT(*) AS email_exist FROM users WHERE email = ?", authData.email, (error, res) => {
-//     if(error) throw error;
-//     if(res[0].email_exist != 0) return result(null, {status: 400, message: 'email has been already taken'});
-//     // console.log(authData.id);
-//     // Create token
-//     const token = jwt.sign({ user_id: 1}, process.env.TOKEN_SECRET, {expiresIn: "86400"});
-//     result(null, token);
-// });
 
 module.exports = Auth;
