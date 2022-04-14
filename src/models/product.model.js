@@ -16,8 +16,12 @@ Product.getProductAll = (userId, result) => {
     (users.username) AS createdBy,
     (SELECT users.username FROM users WHERE users.id = products.updatedBy) AS updatedBy
     FROM products INNER JOIN users ON products.createdBy = users.id WHERE users.createdBy = ?`, userId, (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
@@ -26,29 +30,45 @@ Product.getProductById = ([userId, id], result) => {
     (users.username) AS createdBy,
     (SELECT users.username FROM users WHERE users.id = products.updatedBy) AS updatedBy
     FROM products INNER JOIN users ON products.createdBy = users.id WHERE products.id = ? AND users.createdBy = ?`, [id, userId], (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
 Product.createProduct = (productData, result) => {
     dbConn.query("INSERT INTO products SET ?", productData, (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
 Product.updateProduct = (id, productData, result) => {
     dbConn.query(`UPDATE products SET name=?, qty=?, price=?, updatedAt=?, updatedBy=? WHERE id=?`, [productData.name, productData.qty, productData.price, new Date(), productData.updatedBy, id], (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
 Product.deleteProduct = (id, result) => {
     dbConn.query("DELETE FROM products WHERE id =?", [id], (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 

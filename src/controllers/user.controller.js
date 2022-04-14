@@ -25,9 +25,11 @@ exports.createUser = (req, res) => {
     userData.createdBy = req.user.user_id;
     userData.updatedBy = req.user.user_id;
     UserModel.createUser(userData, (error, user) => {
-        if(error) throw error;
-        // if (user) return res.status(505).send({status: false, message: '505 internal server error'})
-        res.status(200).send({status: true, message: 'User has been created successfully!', data: user});
+        if (error)
+            throw error;
+        if (user.sqlMessage)
+            return res.status(400).send({ status: false, message: user.sqlMessage });
+        res.status(200).send({ status: true, message: 'User has been created successfully!', data: user });
     })
 }
 
@@ -39,6 +41,8 @@ exports.updateUser = (req, res) => {
     userData.updatedBy = req.user.user_id;
     UserModel.updateUser(req.params.id, userData, (error, user) => {
         if(error) throw error;
+        if (user.sqlMessage)
+            return res.status(400).send({ status: false, message: user.sqlMessage });
         res.status(200).send({status: true, message: 'User has been updated successfully!', data: user});
     })
 }

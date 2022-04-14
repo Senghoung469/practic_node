@@ -54,15 +54,23 @@ User.createUser = (userData, result) => {
 
 User.updateUser = (id, userData, result) => {
     dbConn.query(`UPDATE users SET username=?, email=?, password=?, updatedAt=?, updatedBy=? WHERE id=?`,[userData.username, userData.email, userData.password, new Date(), userData.updatedBy, id], (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
 User.deleteUser = (id, result) => {
     dbConn.query("DELETE FROM users WHERE id = ?", [id], (error, res) => {
-        if(error) throw error;
-        result(null, res);
+        try {
+            if(error) throw error;
+            result(null, res);
+        } catch (error) {
+            result(null, error);
+        }
     });
 }
 
