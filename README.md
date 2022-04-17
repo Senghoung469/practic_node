@@ -10,7 +10,7 @@ Start serve
 npm run dev
 
 # Create .env
-TOKEN_SECRET=secret;
+TOKEN_SECRET=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;
 
 # How to config connection 
 check in folder config create database and run script db

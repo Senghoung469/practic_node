@@ -1,5 +1,6 @@
 var SHA256 = require("crypto-js/sha256");
 const mv = require('mv');
+const fs = require('fs');
 const path = require('path')
 const multer  = require('multer')
 
@@ -15,22 +16,30 @@ multer.diskStorage({
     }
 });
 
-exports.uploadService = (req, res) => {
-    let tempFile = req.files.upload;
+const uploadService = (file) => {
+    let tempFile = file;
     let temPathFile = tempFile.path;
-    let targetPathUrl = "public/uploads/images/" + SHA256(req.files.upload.name) + '-' + Date.now() + path.extname(tempFile.originalFilename).toLocaleLowerCase();
-
+    let fileName = SHA256(file.name) + '-' + Date.now() + path.extname(tempFile.originalFilename).toLocaleLowerCase();
+    let targetPathUrl = "public/uploads/images/" + fileName;
     if(path.extname(tempFile.originalFilename).toLocaleLowerCase() === '.png'|| '.jpg'){
         mv(temPathFile, targetPathUrl, error => {
             if(error){
-                return res.status(400).send({status: false, message: error});
-            }else{
-                res.status(200).json({
-                    uploaded:true,
-                    message: 'File has been Uploaded successfully!',
-                    url: `uploads/${targetPathUrl}`
-                })
+                return ({status: false, message: error});
             }
         });
     }
+    return fileName;
 }
+
+const destroyFileService = (url) => {
+    let targetPathUrl = "public/uploads/images/" + url;
+    console.log(targetPathUrl);
+    // return
+    fs.unlink(targetPathUrl, (error) => {
+        if(error) throw error;
+        console.log("file deleted");
+    });
+}
+
+module.exports.uploadService = uploadService;
+module.exports.destroyFileService = destroyFileService;

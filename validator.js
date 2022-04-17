@@ -21,6 +21,7 @@ const productValidator = body => {
         name: Joi.string().min(3).max(100).trim(true).required(),
         qty: Joi.number().required(),
         price: Joi.number().required(),
+        image: Joi.string().trim(true),
         createdAt: Joi.date(),
         updatedAt: Joi.date(),
         createdBy: Joi.number(),

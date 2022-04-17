@@ -16,7 +16,10 @@ Auth.signAuth = (authData, result) => {
     dbConn.query("INSERT INTO users SET ?", authData, (error, res) => {
         try {
             if(error) throw error;
-            result(null, res);
+            if(res.insertId){
+                dbConn.query("UPDATE users SET createdBy = ?, updatedBy = ? WHERE id = ?", [res.insertId, res.insertId, res.insertId]);
+                result(null, res);
+            }
         } catch (error) {
             result(null, error);
         }

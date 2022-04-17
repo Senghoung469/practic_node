@@ -7,7 +7,7 @@ var multipartMiddleware = multipart();
 const port = 3000
 
 // create application/x-www-form-urlencoded parser create application/json parser
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true  }));
 app.use(bodyParser.json());
 
 // Config cors origin
@@ -46,7 +46,7 @@ app.delete('/api/v1/user/:id', cors(corsOptions), auth, userRoutes);
 // Product route
 app.get('/api/v1/product', cors(corsOptions), auth, productRoutes);
 app.get('/api/v1/product/:id', cors(corsOptions), auth, productRoutes);
-app.post('/api/v1/product', cors(corsOptions), auth, productRoutes);
+app.post('/api/v1/product', multipartMiddleware, cors(corsOptions), auth, productRoutes);
 app.put('/api/v1/product/:id', cors(corsOptions), auth, productRoutes);
 app.delete('/api/v1/product/:id', cors(corsOptions), auth, productRoutes);
 
