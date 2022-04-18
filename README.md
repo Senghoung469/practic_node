@@ -18,6 +18,6 @@ dbConn = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'password',
-    database: 'database_name'
+    database: 'practical'
 });
 

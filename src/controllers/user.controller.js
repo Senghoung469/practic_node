@@ -43,6 +43,7 @@ exports.updateUser = (req, res) => {
         if(error) throw error;
         if (user.sqlMessage)
             return res.status(400).send({ status: false, message: user.sqlMessage });
+        if(user.affectedRows == 0) return res.status(404).send({ status: false, message: 'No row to update' });
         res.status(200).send({status: true, message: 'User has been updated successfully!', data: user});
     })
 }
@@ -51,7 +52,7 @@ exports.updateUser = (req, res) => {
 exports.deleteUser = (req, res) => {
     UserModel.deleteUser(req.params.id, (error, user) => {
         if(error) throw error;
-        if(user.affectedRows == 0) return res.status(400).send({ status: false, message: 'No row to delete' });
+        if(user.affectedRows == 0) return res.status(404).send({ status: false, message: 'No row to delete' });
         res.status(200).send({status: true, message: 'User has been deleted!'});
     });
 }

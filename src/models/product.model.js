@@ -1,4 +1,5 @@
 let dbConn = require("../../config/db.config");
+const {uploadService, destroyFileService} = require("../controllers/service.controller");
 
 let Product = function(product) {
     this.id = product.id;
@@ -51,14 +52,27 @@ Product.createProduct = (productData, result) => {
     });
 }
 
-Product.updateProduct = (id, productData, result) => {
-    dbConn.query(`UPDATE products SET name=?, qty=?, price=?, updatedAt=?, updatedBy=? WHERE id=?`, [productData.name, productData.qty, productData.price, new Date(), productData.updatedBy, id], (error, res) => {
-        try {
-            if(error) throw error;
-            result(null, res);
-        } catch (error) {
-            result(null, error);
-        }
+Product.updateProduct = (id, file, productData, result) => {
+    dbConn.query("SELECT image FROM products WHERE id = ?", id, (error, image) => {
+        if(error) throw error;
+        dbConn.query(`UPDATE products SET name=?, qty=?, price=?, updatedAt=?, updatedBy=? WHERE id=?`, 
+        [productData.name, productData.qty, productData.price, new Date(), productData.updatedBy, id], (error, res) => {
+            try {
+                if(error) throw error;
+                if(res.affectedRows != 0){
+                    // Remove old file 
+                    destroyFileService(image[0].image);
+                    // Upload new file update 
+                    let url = uploadService(file);
+                    dbConn.query(`UPDATE products SET image=? WHERE id=?`, [url, id]);
+                    result(null, res);
+                }else{
+                    result(null, res);
+                }
+            } catch (error) {
+                result(null, error);
+            }
+        });
     });
 }
 

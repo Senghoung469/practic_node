@@ -28,14 +28,11 @@ const uploadService = (file) => {
             }
         });
     }
-    return fileName;
+    return targetPathUrl;
 }
 
 const destroyFileService = (url) => {
-    let targetPathUrl = "public/uploads/images/" + url;
-    console.log(targetPathUrl);
-    // return
-    fs.unlink(targetPathUrl, (error) => {
+    fs.unlink(url, (error) => {
         if(error) throw error;
         console.log("file deleted");
     });
